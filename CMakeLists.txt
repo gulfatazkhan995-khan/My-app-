@@ -1,11 +1,14 @@
 cmake_minimum_required(VERSION 3.22)
-project(faraziq_native_core VERSION 0.1.0 LANGUAGES CXX)
+project(faraziq_native_core VERSION 0.2.0 LANGUAGES CXX)
 
 add_library(faraziq_core STATIC
     native/src/cpu/cpu_resource_manager.cpp
     native/src/gpu/gpu_resource_manager.cpp
     native/src/memory/memory_pool.cpp
     native/src/scheduler/task_scheduler.cpp
+    native/src/media/media_buffers.cpp
+    native/src/timeline/timeline.cpp
+    native/src/performance/thermal_manager.cpp
 )
 
 target_include_directories(faraziq_core PUBLIC native/include)
