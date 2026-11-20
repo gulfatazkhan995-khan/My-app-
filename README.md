@@ -1,17 +1,12 @@
-# FARAZIQ Native Core — staged foundation
+# FARAZIQ Native Core — initial resource foundation
 
-This initial implementation step adds four portable C++23 modules (four `.cpp` translation units):
+This repository adds a staged, portable C++23 native core and preserves the original `My app` file. Current implemented foundations cover CPU worker-capacity guidance, GPU backend policy and memory budget leases, bounded memory pools, priority task scheduling, pooled audio/video buffers, timeline metadata, thermal policy, CPU rendering adjustments, sandboxed project file I/O, and an Android JNI native-session bridge.
 
-1. **CPU Resource Manager** detects online/logical CPU capacity and returns a conservative worker-count recommendation. It does not alter Android's OS scheduler.
-2. **GPU Resource Manager** selects the best backend reported by the Android/application adapter (Vulkan, OpenGL ES, CPU fallback) and tracks a strict app-provided reservation budget through RAII leases. It does not itself create a graphics context or submit GPU work.
-3. **RAM Memory Pool** provides a fixed-capacity arena, aligned move-only RAII allocations, free-range coalescing, and usage/high-water statistics.
-4. **Task Scheduler** runs jobs on a fixed worker pool with stable priority ordering, cooperative cancellation, futures for status delivery, exception containment, and cancellation of queued work during shutdown.
+The system is offline-first and has no external runtime dependencies in the portable core. Platform capabilities must be supplied by Android adapters; GPU capability flags do not create a graphics context. Actual hardware rendering, MediaCodec, Android lifecycle/thermal callbacks, storage access framework, and complete editing features require additional integration.
 
-The repository currently has no Android app/module scaffold; the existing `My app` file is preserved. These modules are a first implementation step, not the complete FARAZIQ engine. Rendering, codecs/MediaCodec, timeline, storage, thermal monitoring, JNI, and actual Vulkan/OpenGL execution require later modules and Android lifecycle/context integration.
+## Build
 
-## Build and verification
+Host C++23: `cmake -S . -B build && cmake --build build`.
+Android: integrate the root CMake project with Android Studio/NDK and choose the app ABI and minimum SDK. If using the JNI bridge, implement `com.faraziq.studio.NativeCore` with matching native methods before loading the library.
 
-With a C++23 compiler: `cmake -S . -B build && cmake --build build`.
-For Android, configure through Android Studio's installed NDK toolchain and select the required ABI/minimum SDK in the consuming app. No external runtime dependency is used in this step. Compilation and Android-device execution have **not** been performed here; do not treat static authoring as a build result.
-
-GPU capability values must be populated by a platform adapter that owns/probes a valid graphics instance/context. The GPU reservation API accounts for budget only. Scheduler jobs must periodically check their cancellation token; C++ cannot safely forcibly terminate a running task blocked in external code.
+Build and device tests have not been performed here; compile and test on the intended NDK/ABIs before production use. See `docs/IMPLEMENTATION_PROGRESS.md` for implemented scope, limitations, and verification status.

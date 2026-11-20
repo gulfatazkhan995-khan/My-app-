@@ -9,7 +9,12 @@ add_library(faraziq_core STATIC
     native/src/media/media_buffers.cpp
     native/src/timeline/timeline.cpp
     native/src/performance/thermal_manager.cpp
+    native/src/rendering/software_renderer.cpp
+    native/src/storage/project_storage.cpp
 )
+if(ANDROID)
+    target_sources(faraziq_core PRIVATE native/src/android/native_core_jni.cpp)
+endif()
 
 target_include_directories(faraziq_core PUBLIC native/include)
 target_compile_features(faraziq_core PUBLIC cxx_std_23)

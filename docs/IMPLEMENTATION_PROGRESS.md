@@ -1,13 +1,22 @@
 # FARAZIQ Native Core — progress
 
-## Completed implementation steps
+## Implemented modules
 
-**Step 1:** CPU capacity manager, GPU backend policy/budget leases, bounded RAM arena with aligned RAII leases, and priority task scheduler.
+1. CPU logical-capacity detection and conservative worker recommendations.
+2. GPU backend policy (Vulkan/OpenGL ES/CPU fallback) and bounded RAII reservation accounting. Graphics device/context creation and command execution require a platform graphics adapter.
+3. Bounded RAM arena with aligned move-only RAII buffers.
+4. Fixed-worker priority scheduler with cancellation, future status reporting, and exception containment.
+5. Pooled video/audio buffer types with dimension and allocation-overflow validation.
+6. Thread-safe timeline track/clip metadata operations and duration queries.
+7. Thermal/memory-pressure policy mapping to job concurrency and GPU allowance.
+8. CPU software renderer implementing exposure, invert, and grayscale operations over validated frames; alpha is preserved for RGBA.
+9. Sandboxed project file read and atomic write utility rooted in an app-private directory.
+10. Android JNI registration bridge that creates/destroys a scheduler-backed native session and reports version.
 
-**Step 2:** validated pooled video/audio buffer allocation, thread-safe timeline clip/track metadata operations, and thermal/memory-pressure performance policy.
+## Current scope and remaining work
 
-Existing repository content is preserved. These modules are a foundation, not a finished production editor engine. No Android app scaffold was present in the starting commit. GPU context/device creation, actual rendering commands, media codec integration, filesystem sandbox/SAF integration, JNI lifecycle, recovery, diagnostics, project serialization, and undo/redo remain future work; platform adapters must provide genuine device observations instead of assumed capability values.
+These are concrete foundations, not the complete professional editing engine. MediaCodec decoding/encoding, actual Vulkan/OpenGL render backends, Android thermal/memory callbacks, SAF integration, project serialization/recovery, undo/redo, engine plugin registration, audio DSP, export coordination, and diagnostics remain unimplemented. Android Kotlin/Java must provide class `com.faraziq.studio.NativeCore` with native methods `nativeCreate(int): long`, `nativeDestroy(long): void`, and `nativeGetVersion(): String`, and load the built library. The project began with no Android app scaffold; the existing `My app` file is preserved.
 
-## Build status
+## Build and verification
 
-A CMake build is configured for C++23 with warnings. Compilation and Android/device testing have not been performed in this environment, so no passing build/test claim is made. Build locally with `cmake -S . -B build && cmake --build build` using a C++23 compiler, or import the root CMake project through Android Studio and select an installed NDK/toolchain and app ABI.
+CMake targets C++23. No compiler/build runner or Android device was used for this commit; compilation and runtime behavior are unverified. For a host build run `cmake -S . -B build && cmake --build build` using a C++23 compiler. For Android, import the root CMake project through Android Studio, use the installed NDK, and configure the app's ABI/minimum SDK. Android JNI code is included only when `ANDROID` is true. Do not interpret the source additions as a successful build or device test.
